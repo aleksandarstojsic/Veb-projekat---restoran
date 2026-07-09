@@ -186,7 +186,9 @@ main {
 
 .hero-card,
 .intro-grid article,
-.menu-preview {
+.menu-preview,
+.menu-card,
+.dish-details {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -246,6 +248,190 @@ main {
   color: var(--red);
 }
 
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.section-heading h2 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+}
+
+.search-box {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 320px);
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+.search-box input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(181, 39, 31, 0.12);
+}
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.category-tabs button,
+.menu-card-actions button {
+  min-height: 42px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.category-tabs button.is-active,
+.category-tabs button:hover,
+.menu-card-actions button:hover {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.menu-card {
+  overflow: hidden;
+}
+
+.menu-card img,
+.dish-details img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.menu-card img {
+  height: 185px;
+}
+
+.menu-card-body {
+  padding: 18px;
+}
+
+.menu-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.menu-card-top span,
+.dish-details span {
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.menu-card-top strong {
+  padding: 5px 8px;
+  color: #fff;
+  background: var(--gold);
+  border-radius: 6px;
+  font-size: 0.74rem;
+}
+
+.menu-card h3,
+.dish-details h3 {
+  margin: 0 0 8px;
+}
+
+.menu-card p,
+.dish-details p {
+  min-height: 52px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.menu-card-actions,
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.menu-card-actions b,
+.detail-row strong {
+  color: var(--red-dark);
+  font-size: 1.05rem;
+}
+
+.dish-details {
+  position: sticky;
+  top: 92px;
+  overflow: hidden;
+}
+
+.dish-details img {
+  height: 210px;
+}
+
+.dish-details span,
+.dish-details h3,
+.dish-details p,
+.detail-row {
+  margin-left: 18px;
+  margin-right: 18px;
+}
+
+.dish-details span {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.dish-details p {
+  min-height: 0;
+}
+
+.detail-row {
+  padding-bottom: 18px;
+}
+
+.detail-row small {
+  color: var(--green);
+  font-weight: 800;
+}
+
 @media (max-width: 860px) {
   .site-header {
     align-items: flex-start;
@@ -253,12 +439,26 @@ main {
   }
 
   .hero,
-  .intro-grid {
+  .intro-grid,
+  .menu-layout,
+  .section-heading {
     grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    display: grid;
   }
 
   .hero {
     min-height: auto;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .dish-details {
+    position: static;
   }
 }
 
@@ -270,5 +470,9 @@ main {
 
   .hero {
     padding: 26px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
   }
 }

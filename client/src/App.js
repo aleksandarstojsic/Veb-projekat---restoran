@@ -1,4 +1,6 @@
+import { useMemo, useState } from 'react';
 import './App.css';
+import { menuCategories, menuItems } from './data/menuData';
 
 const restaurantInfo = {
   name: 'Sedmica',
@@ -9,6 +11,23 @@ const restaurantInfo = {
 };
 
 function App() {
+  const [activeCategory, setActiveCategory] = useState('Sve');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedItem, setSelectedItem] = useState(menuItems[0]);
+
+  const filteredItems = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return menuItems.filter((item) => {
+      const matchesCategory = activeCategory === 'Sve' || item.category === activeCategory;
+      const matchesSearch = !normalizedSearch
+        || item.name.toLowerCase().includes(normalizedSearch)
+        || item.description.toLowerCase().includes(normalizedSearch);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchTerm]);
+
   return (
     <div className="app">
       <header className="site-header">
@@ -69,9 +88,72 @@ function App() {
         </section>
 
         <section className="menu-preview" id="meni">
-          <p className="eyebrow">Meni</p>
-          <h2>Uskoro kompletan izbor jela</h2>
-          <p>U sledecem koraku dodajemo proizvode, kategorije, filtere i detaljan prikaz.</p>
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Meni</p>
+              <h2>Izaberi sta ti se jede</h2>
+              <p>Pregledaj glavna jela iz Sedmice, proveri cenu i otvori detalje pre porucivanja.</p>
+            </div>
+
+            <label className="search-box" htmlFor="menu-search">
+              <span>Pretraga</span>
+              <input
+                id="menu-search"
+                type="search"
+                placeholder="Pizza, pasta, piletina..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </label>
+          </div>
+
+          <div className="category-tabs" aria-label="Kategorije menija">
+            {menuCategories.map((category) => (
+              <button
+                className={activeCategory === category ? 'is-active' : ''}
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          <div className="menu-layout">
+            <div className="menu-grid" aria-live="polite">
+              {filteredItems.map((item) => (
+                <article className="menu-card" key={item.id}>
+                  <img src={item.image} alt={item.name} />
+                  <div className="menu-card-body">
+                    <div className="menu-card-top">
+                      <span>{item.category}</span>
+                      {item.popular && <strong>Popularno</strong>}
+                    </div>
+                    <h3>{item.name}</h3>
+                    <p>{item.description}</p>
+                    <div className="menu-card-actions">
+                      <b>{item.price.toLocaleString('sr-RS')} RSD</b>
+                      <button type="button" onClick={() => setSelectedItem(item)}>
+                        Detalji
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <aside className="dish-details" aria-label="Detalji jela">
+              <img src={selectedItem.image} alt={selectedItem.name} />
+              <span>{selectedItem.category}</span>
+              <h3>{selectedItem.name}</h3>
+              <p>{selectedItem.description}</p>
+              <div className="detail-row">
+                <strong>{selectedItem.price.toLocaleString('sr-RS')} RSD</strong>
+                <small>{selectedItem.available ? 'Dostupno danas' : 'Trenutno nedostupno'}</small>
+              </div>
+            </aside>
+          </div>
         </section>
       </main>
     </div>
