@@ -14,6 +14,10 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('Sve');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState(menuItems[0]);
+  const [cartItems, setCartItems] = useState([]);
+  const [deliveryMethod, setDeliveryMethod] = useState('Dostava');
+  const [paymentMethod, setPaymentMethod] = useState('Kartica');
+  const [orderNote, setOrderNote] = useState('');
 
   const filteredItems = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -28,6 +32,36 @@ function App() {
     });
   }, [activeCategory, searchTerm]);
 
+  const cartTotal = cartItems.reduce((sum, cartItem) => sum + cartItem.price * cartItem.quantity, 0);
+  const cartCount = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+
+  const addToCart = (item) => {
+    setCartItems((currentItems) => {
+      const existingItem = currentItems.find((cartItem) => cartItem.id === item.id);
+
+      if (existingItem) {
+        return currentItems.map((cartItem) => (
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        ));
+      }
+
+      return [...currentItems, { ...item, quantity: 1 }];
+    });
+  };
+
+  const updateCartQuantity = (itemId, nextQuantity) => {
+    if (nextQuantity < 1) {
+      setCartItems((currentItems) => currentItems.filter((cartItem) => cartItem.id !== itemId));
+      return;
+    }
+
+    setCartItems((currentItems) => currentItems.map((cartItem) => (
+      cartItem.id === itemId ? { ...cartItem, quantity: nextQuantity } : cartItem
+    )));
+  };
+
   return (
     <div className="app">
       <header className="site-header">
@@ -41,6 +75,7 @@ function App() {
 
         <nav className="main-nav" aria-label="Glavna navigacija">
           <a href="#meni">Meni</a>
+          <a href="#korpa">Korpa {cartCount > 0 && <span>{cartCount}</span>}</a>
           <a href="#dostava">Dostava</a>
           <a href="#kontakt">Kontakt</a>
         </nav>
@@ -134,9 +169,14 @@ function App() {
                     <p>{item.description}</p>
                     <div className="menu-card-actions">
                       <b>{item.price.toLocaleString('sr-RS')} RSD</b>
-                      <button type="button" onClick={() => setSelectedItem(item)}>
-                        Detalji
-                      </button>
+                      <span>
+                        <button type="button" onClick={() => setSelectedItem(item)}>
+                          Detalji
+                        </button>
+                        <button type="button" onClick={() => addToCart(item)}>
+                          Dodaj
+                        </button>
+                      </span>
                     </div>
                   </div>
                 </article>
@@ -152,6 +192,105 @@ function App() {
                 <strong>{selectedItem.price.toLocaleString('sr-RS')} RSD</strong>
                 <small>{selectedItem.available ? 'Dostupno danas' : 'Trenutno nedostupno'}</small>
               </div>
+              <button className="wide-action" type="button" onClick={() => addToCart(selectedItem)}>
+                Dodaj u korpu
+              </button>
+            </aside>
+          </div>
+        </section>
+
+        <section className="checkout-section" id="korpa">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Korpa</p>
+              <h2>Tvoja porudzbina</h2>
+              <p>Proveri stavke, izaberi nacin preuzimanja i pripremi placanje.</p>
+            </div>
+            <strong className="cart-total">{cartTotal.toLocaleString('sr-RS')} RSD</strong>
+          </div>
+
+          <div className="checkout-layout">
+            <div className="cart-panel">
+              {cartItems.length === 0 ? (
+                <p className="empty-cart">Korpa je prazna. Dodaj jelo iz menija da zapocnes porudzbinu.</p>
+              ) : (
+                cartItems.map((cartItem) => (
+                  <article className="cart-item" key={cartItem.id}>
+                    <div>
+                      <h3>{cartItem.name}</h3>
+                      <p>{cartItem.price.toLocaleString('sr-RS')} RSD po komadu</p>
+                    </div>
+                    <div className="quantity-controls" aria-label={`Kolicina za ${cartItem.name}`}>
+                      <button
+                        type="button"
+                        onClick={() => updateCartQuantity(cartItem.id, cartItem.quantity - 1)}
+                      >
+                        -
+                      </button>
+                      <span>{cartItem.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateCartQuantity(cartItem.id, cartItem.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <strong>{(cartItem.price * cartItem.quantity).toLocaleString('sr-RS')} RSD</strong>
+                  </article>
+                ))
+              )}
+            </div>
+
+            <aside className="order-panel" aria-label="Podaci za porudzbinu">
+              <div className="option-group">
+                <span>Preuzimanje</span>
+                <div>
+                  {['Dostava', 'Licno preuzimanje'].map((method) => (
+                    <button
+                      className={deliveryMethod === method ? 'is-active' : ''}
+                      key={method}
+                      type="button"
+                      onClick={() => setDeliveryMethod(method)}
+                    >
+                      {method}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="option-group">
+                <span>Placanje</span>
+                <div>
+                  {['Kartica', 'Gotovina'].map((method) => (
+                    <button
+                      className={paymentMethod === method ? 'is-active' : ''}
+                      key={method}
+                      type="button"
+                      onClick={() => setPaymentMethod(method)}
+                    >
+                      {method}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <label className="note-field" htmlFor="order-note">
+                Napomena
+                <textarea
+                  id="order-note"
+                  placeholder="Adresa, sprat, posebna napomena za kuhinju..."
+                  value={orderNote}
+                  onChange={(event) => setOrderNote(event.target.value)}
+                />
+              </label>
+
+              <div className="summary-line">
+                <span>{deliveryMethod}</span>
+                <strong>{paymentMethod}</strong>
+              </div>
+              <button className="checkout-button" disabled={cartItems.length === 0} type="button">
+                Nastavi na porucivanje
+              </button>
             </aside>
           </div>
         </section>

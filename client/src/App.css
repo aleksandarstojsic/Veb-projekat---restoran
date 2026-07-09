@@ -108,6 +108,18 @@ a {
   background: #fff;
 }
 
+.main-nav span {
+  display: inline-grid;
+  min-width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  place-items: center;
+  color: #fff;
+  background: var(--red);
+  border-radius: 999px;
+  font-size: 0.76rem;
+}
+
 main {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -188,7 +200,10 @@ main {
 .intro-grid article,
 .menu-preview,
 .menu-card,
-.dish-details {
+.dish-details,
+.checkout-section,
+.cart-panel,
+.order-panel {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -240,11 +255,13 @@ main {
   line-height: 1.6;
 }
 
-.menu-preview {
+.menu-preview,
+.checkout-section {
   margin-top: 22px;
 }
 
-.menu-preview .eyebrow {
+.menu-preview .eyebrow,
+.checkout-section .eyebrow {
   color: var(--red);
 }
 
@@ -292,7 +309,11 @@ main {
 }
 
 .category-tabs button,
-.menu-card-actions button {
+.menu-card-actions button,
+.wide-action,
+.option-group button,
+.quantity-controls button,
+.checkout-button {
   min-height: 42px;
   padding: 0 14px;
   color: var(--ink);
@@ -305,7 +326,12 @@ main {
 
 .category-tabs button.is-active,
 .category-tabs button:hover,
-.menu-card-actions button:hover {
+.menu-card-actions button:hover,
+.wide-action:hover,
+.option-group button.is-active,
+.option-group button:hover,
+.quantity-controls button:hover,
+.checkout-button {
   color: #fff;
   background: var(--red);
   border-color: var(--red);
@@ -389,6 +415,13 @@ main {
   margin-top: 18px;
 }
 
+.menu-card-actions span {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .menu-card-actions b,
 .detail-row strong {
   color: var(--red-dark);
@@ -432,6 +465,162 @@ main {
   font-weight: 800;
 }
 
+.wide-action {
+  width: calc(100% - 36px);
+  margin: 0 18px 18px;
+}
+
+.checkout-section {
+  padding: 22px;
+}
+
+.cart-total {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 18px;
+  color: #fff;
+  background: var(--green);
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.cart-panel,
+.order-panel {
+  padding: 18px;
+}
+
+.empty-cart {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cart-item:first-child {
+  padding-top: 0;
+}
+
+.cart-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.cart-item h3,
+.cart-item p {
+  margin: 0;
+}
+
+.cart-item p {
+  margin-top: 5px;
+  color: var(--muted);
+}
+
+.cart-item strong {
+  color: var(--red-dark);
+  white-space: nowrap;
+}
+
+.quantity-controls {
+  display: grid;
+  grid-template-columns: 42px 36px 42px;
+  align-items: center;
+  text-align: center;
+}
+
+.quantity-controls button {
+  min-height: 38px;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+.quantity-controls span {
+  font-weight: 900;
+}
+
+.order-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.option-group {
+  display: grid;
+  gap: 10px;
+}
+
+.option-group > span,
+.note-field {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.option-group div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.note-field {
+  display: grid;
+  gap: 8px;
+}
+
+.note-field textarea {
+  min-height: 96px;
+  resize: vertical;
+  padding: 12px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  outline: none;
+}
+
+.note-field textarea:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(181, 39, 31, 0.12);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.summary-line span {
+  color: var(--muted);
+}
+
+.checkout-button {
+  width: 100%;
+  font-weight: 900;
+}
+
+.checkout-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 @media (max-width: 860px) {
   .site-header {
     align-items: flex-start;
@@ -441,7 +630,8 @@ main {
   .hero,
   .intro-grid,
   .menu-layout,
-  .section-heading {
+  .section-heading,
+  .checkout-layout {
     grid-template-columns: 1fr;
   }
 
@@ -474,5 +664,13 @@ main {
 
   .menu-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    grid-template-columns: 1fr;
+  }
+
+  .quantity-controls {
+    width: 120px;
   }
 }
