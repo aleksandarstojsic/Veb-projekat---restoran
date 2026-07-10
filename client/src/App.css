@@ -460,11 +460,6 @@ main {
   padding-bottom: 18px;
 }
 
-.detail-row small {
-  color: var(--green);
-  font-weight: 800;
-}
-
 .wide-action {
   width: calc(100% - 36px);
   margin: 0 18px 18px;

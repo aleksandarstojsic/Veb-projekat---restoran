@@ -190,7 +190,6 @@ function App() {
               <p>{selectedItem.description}</p>
               <div className="detail-row">
                 <strong>{selectedItem.price.toLocaleString('sr-RS')} RSD</strong>
-                <small>{selectedItem.available ? 'Dostupno danas' : 'Trenutno nedostupno'}</small>
               </div>
               <button className="wide-action" type="button" onClick={() => addToCart(selectedItem)}>
                 Dodaj u korpu
