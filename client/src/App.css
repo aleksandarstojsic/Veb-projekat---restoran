@@ -198,6 +198,8 @@ main {
 
 .hero-card,
 .intro-grid article,
+.auth-section,
+.account-card,
 .menu-preview,
 .menu-card,
 .dish-details,
@@ -256,13 +258,109 @@ main {
 }
 
 .menu-preview,
+.auth-section,
 .checkout-section {
   margin-top: 22px;
 }
 
 .menu-preview .eyebrow,
+.auth-section .eyebrow,
 .checkout-section .eyebrow {
   color: var(--red);
+}
+
+.auth-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 22px;
+  align-items: start;
+  padding: 22px;
+}
+
+.auth-section h2 {
+  margin: 8px 0 10px;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+.auth-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.auth-form,
+.account-card {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-tabs button,
+.auth-submit,
+.account-card button {
+  min-height: 42px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.auth-tabs button.is-active,
+.auth-tabs button:hover,
+.auth-submit,
+.account-card button:hover {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.auth-form input {
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(181, 39, 31, 0.12);
+}
+
+.auth-notice {
+  padding: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.account-card {
+  padding: 18px;
+}
+
+.account-card span {
+  color: var(--green);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.account-card strong {
+  color: var(--ink);
 }
 
 .section-heading {
@@ -624,6 +722,7 @@ main {
 
   .hero,
   .intro-grid,
+  .auth-section,
   .menu-layout,
   .section-heading,
   .checkout-layout {

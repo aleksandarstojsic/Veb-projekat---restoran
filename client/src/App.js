@@ -18,6 +18,14 @@ function App() {
   const [deliveryMethod, setDeliveryMethod] = useState('Dostava');
   const [paymentMethod, setPaymentMethod] = useState('Kartica');
   const [orderNote, setOrderNote] = useState('');
+  const [authMode, setAuthMode] = useState('login');
+  const [authForm, setAuthForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authNotice, setAuthNotice] = useState('Prijavi se da bi mogao da dodajes jela u korpu.');
 
   const filteredItems = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -34,8 +42,49 @@ function App() {
 
   const cartTotal = cartItems.reduce((sum, cartItem) => sum + cartItem.price * cartItem.quantity, 0);
   const cartCount = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+  const isLoggedIn = Boolean(currentUser);
+
+  const handleAuthChange = (event) => {
+    const { name, value } = event.target;
+    setAuthForm((currentForm) => ({ ...currentForm, [name]: value }));
+  };
+
+  const submitAuth = (event) => {
+    event.preventDefault();
+    const trimmedName = authForm.name.trim();
+    const trimmedEmail = authForm.email.trim();
+
+    if (!trimmedEmail || !authForm.password) {
+      setAuthNotice('Unesi email i lozinku za prijavu.');
+      return;
+    }
+
+    if (authMode === 'register' && (!trimmedName || authForm.password.length < 6)) {
+      setAuthNotice('Za registraciju unesi ime i lozinku od najmanje 6 karaktera.');
+      return;
+    }
+
+    setCurrentUser({
+      name: trimmedName || trimmedEmail.split('@')[0],
+      email: trimmedEmail,
+      role: 'registrovani korisnik',
+    });
+    setAuthNotice('Uspesno si prijavljen. Mozes da nastavis porucivanje.');
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    setCartItems([]);
+    setAuthNotice('Odjavljen si. Meni ostaje dostupan za pregled.');
+  };
 
   const addToCart = (item) => {
+    if (!isLoggedIn) {
+      setAuthNotice('Za dodavanje u korpu prvo se prijavi ili registruj.');
+      document.getElementById('prijava')?.scrollIntoView?.({ behavior: 'smooth' });
+      return;
+    }
+
     setCartItems((currentItems) => {
       const existingItem = currentItems.find((cartItem) => cartItem.id === item.id);
 
@@ -76,6 +125,7 @@ function App() {
         <nav className="main-nav" aria-label="Glavna navigacija">
           <a href="#meni">Meni</a>
           <a href="#korpa">Korpa {cartCount > 0 && <span>{cartCount}</span>}</a>
+          <a href="#prijava">{isLoggedIn ? 'Nalog' : 'Prijava'}</a>
           <a href="#dostava">Dostava</a>
           <a href="#kontakt">Kontakt</a>
         </nav>
@@ -120,6 +170,83 @@ function App() {
             <h2>Dostava i preuzimanje</h2>
             <p>Porudzbinu mozes preuzeti u lokalu ili traziti dostavu u okolini.</p>
           </article>
+        </section>
+
+        <section className="auth-section" id="prijava">
+          <div>
+            <p className="eyebrow">{isLoggedIn ? 'Nalog' : 'Prijava'}</p>
+            <h2>{isLoggedIn ? `Zdravo, ${currentUser.name}` : 'Prijavi se za porucivanje'}</h2>
+            <p>
+              Kao gost mozes da pregledas meni i cene, a porucivanje se aktivira nakon prijave.
+            </p>
+          </div>
+
+          {isLoggedIn ? (
+            <div className="account-card">
+              <span>{currentUser.role}</span>
+              <strong>{currentUser.email}</strong>
+              <button type="button" onClick={logout}>Odjavi se</button>
+            </div>
+          ) : (
+            <form className="auth-form" onSubmit={submitAuth}>
+              <div className="auth-tabs" aria-label="Tip forme">
+                <button
+                  className={authMode === 'login' ? 'is-active' : ''}
+                  type="button"
+                  onClick={() => setAuthMode('login')}
+                >
+                  Prijava
+                </button>
+                <button
+                  className={authMode === 'register' ? 'is-active' : ''}
+                  type="button"
+                  onClick={() => setAuthMode('register')}
+                >
+                  Registracija
+                </button>
+              </div>
+
+              {authMode === 'register' && (
+                <label htmlFor="auth-name">
+                  Ime
+                  <input
+                    id="auth-name"
+                    name="name"
+                    type="text"
+                    value={authForm.name}
+                    onChange={handleAuthChange}
+                  />
+                </label>
+              )}
+
+              <label htmlFor="auth-email">
+                Email
+                <input
+                  id="auth-email"
+                  name="email"
+                  type="email"
+                  value={authForm.email}
+                  onChange={handleAuthChange}
+                />
+              </label>
+
+              <label htmlFor="auth-password">
+                Lozinka
+                <input
+                  id="auth-password"
+                  name="password"
+                  type="password"
+                  value={authForm.password}
+                  onChange={handleAuthChange}
+                />
+              </label>
+
+              <p className="auth-notice">{authNotice}</p>
+              <button className="auth-submit" type="submit">
+                {authMode === 'register' ? 'Registruj se' : 'Prijavi se'}
+              </button>
+            </form>
+          )}
         </section>
 
         <section className="menu-preview" id="meni">
@@ -174,7 +301,7 @@ function App() {
                           Detalji
                         </button>
                         <button type="button" onClick={() => addToCart(item)}>
-                          Dodaj
+                          {isLoggedIn ? 'Dodaj' : 'Prijava'}
                         </button>
                       </span>
                     </div>
@@ -192,7 +319,7 @@ function App() {
                 <strong>{selectedItem.price.toLocaleString('sr-RS')} RSD</strong>
               </div>
               <button className="wide-action" type="button" onClick={() => addToCart(selectedItem)}>
-                Dodaj u korpu
+                {isLoggedIn ? 'Dodaj u korpu' : 'Prijavi se za porucivanje'}
               </button>
             </aside>
           </div>
