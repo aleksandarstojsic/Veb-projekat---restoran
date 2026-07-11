@@ -13,11 +13,12 @@ const restaurantInfo = {
 function App() {
   const [activeCategory, setActiveCategory] = useState('Sve');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedItem, setSelectedItem] = useState(menuItems[0]);
   const [cartItems, setCartItems] = useState([]);
   const [deliveryMethod, setDeliveryMethod] = useState('Dostava');
   const [paymentMethod, setPaymentMethod] = useState('Kartica');
   const [orderNote, setOrderNote] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [orderMessage, setOrderMessage] = useState('');
   const [authMode, setAuthMode] = useState('login');
   const [authForm, setAuthForm] = useState({
     name: '',
@@ -111,6 +112,36 @@ function App() {
     )));
   };
 
+  const createOrder = () => {
+    if (!isLoggedIn) {
+      setAuthNotice('Za potvrdu porudzbine prvo se prijavi.');
+      document.getElementById('prijava')?.scrollIntoView?.({ behavior: 'smooth' });
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      setOrderMessage('Korpa je prazna. Izaberi jelo iz menija.');
+      return;
+    }
+
+    const nextOrder = {
+      id: `SED-${String(orders.length + 1).padStart(3, '0')}`,
+      createdAt: new Date().toLocaleDateString('sr-RS'),
+      items: cartItems,
+      total: cartTotal,
+      deliveryMethod,
+      paymentMethod,
+      note: orderNote.trim(),
+      status: 'Primljena',
+    };
+
+    setOrders((currentOrders) => [nextOrder, ...currentOrders]);
+    setCartItems([]);
+    setOrderNote('');
+    setOrderMessage(`Porudzbina ${nextOrder.id} je primljena.`);
+    document.getElementById('porudzbine')?.scrollIntoView?.({ behavior: 'smooth' });
+  };
+
   return (
     <div className="app">
       <header className="site-header">
@@ -126,6 +157,7 @@ function App() {
           <a href="#meni">Meni</a>
           <a href="#korpa">Korpa {cartCount > 0 && <span>{cartCount}</span>}</a>
           <a href="#prijava">{isLoggedIn ? 'Nalog' : 'Prijava'}</a>
+          <a href="#porudzbine">Porudzbine</a>
           <a href="#dostava">Dostava</a>
           <a href="#kontakt">Kontakt</a>
         </nav>
@@ -185,6 +217,7 @@ function App() {
             <div className="account-card">
               <span>{currentUser.role}</span>
               <strong>{currentUser.email}</strong>
+              <small>{orders.length === 1 ? '1 porudzbina' : `${orders.length} porudzbina`}</small>
               <button type="button" onClick={logout}>Odjavi se</button>
             </div>
           ) : (
@@ -297,9 +330,6 @@ function App() {
                     <div className="menu-card-actions">
                       <b>{item.price.toLocaleString('sr-RS')} RSD</b>
                       <span>
-                        <button type="button" onClick={() => setSelectedItem(item)}>
-                          Detalji
-                        </button>
                         <button type="button" onClick={() => addToCart(item)}>
                           {isLoggedIn ? 'Dodaj' : 'Prijava'}
                         </button>
@@ -309,19 +339,6 @@ function App() {
                 </article>
               ))}
             </div>
-
-            <aside className="dish-details" aria-label="Detalji jela">
-              <img src={selectedItem.image} alt={selectedItem.name} />
-              <span>{selectedItem.category}</span>
-              <h3>{selectedItem.name}</h3>
-              <p>{selectedItem.description}</p>
-              <div className="detail-row">
-                <strong>{selectedItem.price.toLocaleString('sr-RS')} RSD</strong>
-              </div>
-              <button className="wide-action" type="button" onClick={() => addToCart(selectedItem)}>
-                {isLoggedIn ? 'Dodaj u korpu' : 'Prijavi se za porucivanje'}
-              </button>
-            </aside>
           </div>
         </section>
 
@@ -414,11 +431,54 @@ function App() {
                 <span>{deliveryMethod}</span>
                 <strong>{paymentMethod}</strong>
               </div>
-              <button className="checkout-button" disabled={cartItems.length === 0} type="button">
-                Nastavi na porucivanje
+              {orderMessage && <p className="order-message">{orderMessage}</p>}
+              <button
+                className="checkout-button"
+                disabled={cartItems.length === 0}
+                type="button"
+                onClick={createOrder}
+              >
+                Potvrdi porudzbinu
               </button>
             </aside>
           </div>
+        </section>
+
+        <section className="orders-section" id="porudzbine">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Porudzbine</p>
+              <h2>Pregled porudzbina</h2>
+              <p>Ovde mozes da pratis porudzbine napravljene preko svog naloga.</p>
+            </div>
+          </div>
+
+          {!isLoggedIn ? (
+            <p className="empty-cart">Prijavi se da bi video svoje porudzbine.</p>
+          ) : orders.length === 0 ? (
+            <p className="empty-cart">Jos uvek nemas porudzbina.</p>
+          ) : (
+            <div className="orders-list">
+              {orders.map((order) => (
+                <article className="order-card" key={order.id}>
+                  <div>
+                    <span>{order.id}</span>
+                    <h3>{order.status}</h3>
+                    <p>{order.createdAt} · {order.deliveryMethod} · {order.paymentMethod}</p>
+                  </div>
+                  <ul>
+                    {order.items.map((item) => (
+                      <li key={item.id}>
+                        {item.quantity}x {item.name}
+                      </li>
+                    ))}
+                  </ul>
+                  {order.note && <p className="order-note">Napomena: {order.note}</p>}
+                  <strong>{order.total.toLocaleString('sr-RS')} RSD</strong>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

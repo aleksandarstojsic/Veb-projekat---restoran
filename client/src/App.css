@@ -202,10 +202,11 @@ main {
 .account-card,
 .menu-preview,
 .menu-card,
-.dish-details,
 .checkout-section,
 .cart-panel,
-.order-panel {
+.order-panel,
+.orders-section,
+.order-card {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -363,6 +364,11 @@ main {
   color: var(--ink);
 }
 
+.account-card small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .section-heading {
   display: flex;
   align-items: flex-end;
@@ -408,7 +414,6 @@ main {
 
 .category-tabs button,
 .menu-card-actions button,
-.wide-action,
 .option-group button,
 .quantity-controls button,
 .checkout-button {
@@ -425,7 +430,6 @@ main {
 .category-tabs button.is-active,
 .category-tabs button:hover,
 .menu-card-actions button:hover,
-.wide-action:hover,
 .option-group button.is-active,
 .option-group button:hover,
 .quantity-controls button:hover,
@@ -436,15 +440,12 @@ main {
 }
 
 .menu-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 20px;
-  align-items: start;
+  display: block;
 }
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -452,8 +453,7 @@ main {
   overflow: hidden;
 }
 
-.menu-card img,
-.dish-details img {
+.menu-card img {
   display: block;
   width: 100%;
   object-fit: cover;
@@ -475,8 +475,7 @@ main {
   margin-bottom: 10px;
 }
 
-.menu-card-top span,
-.dish-details span {
+.menu-card-top span {
   color: var(--green);
   font-size: 0.82rem;
   font-weight: 900;
@@ -491,21 +490,18 @@ main {
   font-size: 0.74rem;
 }
 
-.menu-card h3,
-.dish-details h3 {
+.menu-card h3 {
   margin: 0 0 8px;
 }
 
-.menu-card p,
-.dish-details p {
+.menu-card p {
   min-height: 52px;
   margin: 0;
   color: var(--muted);
   line-height: 1.55;
 }
 
-.menu-card-actions,
-.detail-row {
+.menu-card-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -520,47 +516,9 @@ main {
   gap: 8px;
 }
 
-.menu-card-actions b,
-.detail-row strong {
+.menu-card-actions b {
   color: var(--red-dark);
   font-size: 1.05rem;
-}
-
-.dish-details {
-  position: sticky;
-  top: 92px;
-  overflow: hidden;
-}
-
-.dish-details img {
-  height: 210px;
-}
-
-.dish-details span,
-.dish-details h3,
-.dish-details p,
-.detail-row {
-  margin-left: 18px;
-  margin-right: 18px;
-}
-
-.dish-details span {
-  display: block;
-  margin-top: 18px;
-  margin-bottom: 8px;
-}
-
-.dish-details p {
-  min-height: 0;
-}
-
-.detail-row {
-  padding-bottom: 18px;
-}
-
-.wide-action {
-  width: calc(100% - 36px);
-  margin: 0 18px 18px;
 }
 
 .checkout-section {
@@ -714,6 +672,76 @@ main {
   opacity: 0.55;
 }
 
+.order-message {
+  margin: 0;
+  padding: 12px;
+  color: var(--green);
+  background: #edf6ef;
+  border: 1px solid #c9e3ce;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.orders-section {
+  margin-top: 22px;
+  padding: 22px;
+}
+
+.orders-section .eyebrow {
+  color: var(--red);
+}
+
+.orders-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.order-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(180px, 0.8fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding: 18px;
+}
+
+.order-card span {
+  color: var(--green);
+  font-weight: 900;
+}
+
+.order-card h3,
+.order-card p,
+.order-card ul {
+  margin: 0;
+}
+
+.order-card h3 {
+  margin-top: 4px;
+}
+
+.order-card p,
+.order-card li {
+  color: var(--muted);
+}
+
+.order-card ul {
+  display: grid;
+  gap: 6px;
+  padding-left: 18px;
+}
+
+.order-card strong {
+  color: var(--red-dark);
+  white-space: nowrap;
+}
+
+.order-note {
+  grid-column: 1 / -1;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
 @media (max-width: 860px) {
   .site-header {
     align-items: flex-start;
@@ -723,7 +751,6 @@ main {
   .hero,
   .intro-grid,
   .auth-section,
-  .menu-layout,
   .section-heading,
   .checkout-layout {
     grid-template-columns: 1fr;
@@ -741,8 +768,12 @@ main {
     width: 100%;
   }
 
-  .dish-details {
-    position: static;
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .order-card {
+    grid-template-columns: 1fr;
   }
 }
 
