@@ -13,11 +13,15 @@ const restaurantInfo = {
 function App() {
   const [activeCategory, setActiveCategory] = useState('Sve');
   const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState(menuItems);
   const [cartItems, setCartItems] = useState([]);
   const [deliveryMethod, setDeliveryMethod] = useState('Dostava');
   const [paymentMethod, setPaymentMethod] = useState('Kartica');
   const [orderNote, setOrderNote] = useState('');
   const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState([
+    { name: 'Gost', email: '-', role: 'gost' },
+  ]);
   const [orderMessage, setOrderMessage] = useState('');
   const [authMode, setAuthMode] = useState('login');
   const [authForm, setAuthForm] = useState({
@@ -31,7 +35,7 @@ function App() {
   const filteredItems = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
-    return menuItems.filter((item) => {
+    return products.filter((item) => {
       const matchesCategory = activeCategory === 'Sve' || item.category === activeCategory;
       const matchesSearch = !normalizedSearch
         || item.name.toLowerCase().includes(normalizedSearch)
@@ -39,11 +43,12 @@ function App() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchTerm]);
+  }, [activeCategory, products, searchTerm]);
 
   const cartTotal = cartItems.reduce((sum, cartItem) => sum + cartItem.price * cartItem.quantity, 0);
   const cartCount = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
   const isLoggedIn = Boolean(currentUser);
+  const isAdmin = currentUser?.role === 'administrator';
 
   const handleAuthChange = (event) => {
     const { name, value } = event.target;
@@ -65,10 +70,19 @@ function App() {
       return;
     }
 
-    setCurrentUser({
+    const nextUser = {
       name: trimmedName || trimmedEmail.split('@')[0],
       email: trimmedEmail,
-      role: 'registrovani korisnik',
+      role: trimmedEmail.toLowerCase() === 'admin@sedmica.rs' ? 'administrator' : 'registrovani korisnik',
+    };
+
+    setCurrentUser(nextUser);
+    setUsers((currentUsers) => {
+      if (currentUsers.some((user) => user.email === nextUser.email)) {
+        return currentUsers;
+      }
+
+      return [...currentUsers, nextUser];
     });
     setAuthNotice('Uspesno si prijavljen. Mozes da nastavis porucivanje.');
   };
@@ -83,6 +97,11 @@ function App() {
     if (!isLoggedIn) {
       setAuthNotice('Za dodavanje u korpu prvo se prijavi ili registruj.');
       document.getElementById('prijava')?.scrollIntoView?.({ behavior: 'smooth' });
+      return;
+    }
+
+    if (!item.available) {
+      setOrderMessage(`${item.name} trenutno nije dostupan za porucivanje.`);
       return;
     }
 
@@ -142,6 +161,18 @@ function App() {
     document.getElementById('porudzbine')?.scrollIntoView?.({ behavior: 'smooth' });
   };
 
+  const updateOrderStatus = (orderId, nextStatus) => {
+    setOrders((currentOrders) => currentOrders.map((order) => (
+      order.id === orderId ? { ...order, status: nextStatus } : order
+    )));
+  };
+
+  const toggleProductAvailability = (productId) => {
+    setProducts((currentProducts) => currentProducts.map((product) => (
+      product.id === productId ? { ...product, available: !product.available } : product
+    )));
+  };
+
   return (
     <div className="app">
       <header className="site-header">
@@ -158,6 +189,7 @@ function App() {
           <a href="#korpa">Korpa {cartCount > 0 && <span>{cartCount}</span>}</a>
           <a href="#prijava">{isLoggedIn ? 'Nalog' : 'Prijava'}</a>
           <a href="#porudzbine">Porudzbine</a>
+          {isAdmin && <a href="#admin">Admin</a>}
           <a href="#dostava">Dostava</a>
           <a href="#kontakt">Kontakt</a>
         </nav>
@@ -324,14 +356,19 @@ function App() {
                     <div className="menu-card-top">
                       <span>{item.category}</span>
                       {item.popular && <strong>Popularno</strong>}
+                      {!item.available && <strong className="muted-badge">Nedostupno</strong>}
                     </div>
                     <h3>{item.name}</h3>
                     <p>{item.description}</p>
                     <div className="menu-card-actions">
                       <b>{item.price.toLocaleString('sr-RS')} RSD</b>
                       <span>
-                        <button type="button" onClick={() => addToCart(item)}>
-                          {isLoggedIn ? 'Dodaj' : 'Prijava'}
+                        <button
+                          disabled={!item.available}
+                          type="button"
+                          onClick={() => addToCart(item)}
+                        >
+                          {!item.available ? 'Nema' : isLoggedIn ? 'Dodaj' : 'Prijava'}
                         </button>
                       </span>
                     </div>
@@ -480,6 +517,74 @@ function App() {
             </div>
           )}
         </section>
+
+        {isAdmin && (
+          <section className="admin-section" id="admin">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Admin</p>
+                <h2>Upravljanje restoranom</h2>
+                <p>Pregled proizvoda, porudzbina i korisnika za osoblje Sedmice.</p>
+              </div>
+            </div>
+
+            <div className="admin-grid">
+              <article className="admin-panel">
+                <h3>Proizvodi</h3>
+                <div className="admin-list">
+                  {products.map((product) => (
+                    <div className="admin-row" key={product.id}>
+                      <span>{product.name}</span>
+                      <strong>{product.price.toLocaleString('sr-RS')} RSD</strong>
+                      <button type="button" onClick={() => toggleProductAvailability(product.id)}>
+                        {product.available ? 'Sakrij' : 'Vrati'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="admin-panel">
+                <h3>Porudzbine</h3>
+                {orders.length === 0 ? (
+                  <p className="empty-cart">Nema novih porudzbina.</p>
+                ) : (
+                  <div className="admin-list">
+                    {orders.map((order) => (
+                      <div className="admin-row" key={order.id}>
+                        <span>{order.id}</span>
+                        <strong>{order.status}</strong>
+                        <select
+                          aria-label={`Status porudzbine ${order.id}`}
+                          value={order.status}
+                          onChange={(event) => updateOrderStatus(order.id, event.target.value)}
+                        >
+                          <option>Primljena</option>
+                          <option>U pripremi</option>
+                          <option>Spremna</option>
+                          <option>Zavrsena</option>
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </article>
+
+              <article className="admin-panel">
+                <h3>Korisnici</h3>
+                <div className="admin-list">
+                  {users.map((user) => (
+                    <div className="admin-row" key={`${user.email}-${user.role}`}>
+                      <span>{user.name}</span>
+                      <strong>{user.role}</strong>
+                      <small>{user.email}</small>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

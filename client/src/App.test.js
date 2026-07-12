@@ -52,3 +52,19 @@ test('creates order from cart', () => {
   expect(screen.getByText(/porudzbina SED-001 je primljena/i)).toBeInTheDocument();
   expect(screen.getAllByText(/SED-001/i)).toHaveLength(2);
 });
+
+test('shows admin panel for administrator account', () => {
+  render(<App />);
+  fireEvent.change(screen.getByLabelText(/email/i), {
+    target: { value: 'admin@sedmica.rs' },
+  });
+  fireEvent.change(screen.getByLabelText(/lozinka/i), {
+    target: { value: 'sedmica123' },
+  });
+
+  fireEvent.click(screen.getByRole('button', { name: /^prijavi se$/i }));
+
+  expect(screen.getByRole('heading', { name: /upravljanje restoranom/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /proizvodi/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /korisnici/i })).toBeInTheDocument();
+});

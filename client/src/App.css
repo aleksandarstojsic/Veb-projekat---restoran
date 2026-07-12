@@ -206,7 +206,9 @@ main {
 .cart-panel,
 .order-panel,
 .orders-section,
-.order-card {
+.order-card,
+.admin-section,
+.admin-panel {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -260,13 +262,15 @@ main {
 
 .menu-preview,
 .auth-section,
-.checkout-section {
+.checkout-section,
+.admin-section {
   margin-top: 22px;
 }
 
 .menu-preview .eyebrow,
 .auth-section .eyebrow,
-.checkout-section .eyebrow {
+.checkout-section .eyebrow,
+.admin-section .eyebrow {
   color: var(--red);
 }
 
@@ -490,6 +494,10 @@ main {
   font-size: 0.74rem;
 }
 
+.menu-card-top .muted-badge {
+  background: var(--muted);
+}
+
 .menu-card h3 {
   margin: 0 0 8px;
 }
@@ -672,6 +680,11 @@ main {
   opacity: 0.55;
 }
 
+.menu-card-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .order-message {
   margin: 0;
   padding: 12px;
@@ -742,6 +755,75 @@ main {
   border-top: 1px solid var(--line);
 }
 
+.admin-section {
+  padding: 22px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.admin-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.admin-panel h3 {
+  margin: 0;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.admin-row span {
+  min-width: 0;
+  font-weight: 800;
+}
+
+.admin-row strong,
+.admin-row small {
+  color: var(--muted);
+}
+
+.admin-row button,
+.admin-row select {
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 800;
+}
+
+.admin-row button {
+  cursor: pointer;
+}
+
+.admin-row button:hover {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
 @media (max-width: 860px) {
   .site-header {
     align-items: flex-start;
@@ -772,7 +854,8 @@ main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .order-card {
+  .order-card,
+  .admin-grid {
     grid-template-columns: 1fr;
   }
 }
