@@ -1,0 +1,116 @@
+const categories = [
+  { id: 'cat-pizza', name: 'Pizza' },
+  { id: 'cat-cebate', name: 'Cebate' },
+  { id: 'cat-glavna-jela', name: 'Glavna jela' },
+  { id: 'cat-paste', name: 'Paste' },
+  { id: 'cat-salate', name: 'Salate' },
+];
+
+const products = [
+  {
+    id: 'pizza-sedmica',
+    name: 'Sedmica 32cm',
+    category: 'Pizza',
+    price: 1250,
+    description: 'Pelat, kombinacija sireva, slanina, blue cheese, rukola i cherry paradajz.',
+    image: '/sedmica-menu/pica7.0aed2bf1e711a0a3586b.jpg',
+    available: true,
+  },
+  {
+    id: 'pizza-capriciosa',
+    name: 'Capriciosa 32cm',
+    category: 'Pizza',
+    price: 1015,
+    description: 'Pelat, kombinacija sireva, sunka, sampinjoni i masline.',
+    image: '/sedmica-menu/pica7.0aed2bf1e711a0a3586b.jpg',
+    available: true,
+  },
+  {
+    id: 'pizza-prsut',
+    name: 'Pizza prsut 32cm',
+    category: 'Pizza',
+    price: 1495,
+    description: 'Pelat, sirevi, rukola, cherry paradajz, prsut, masline i parmezan.',
+    image: '/sedmica-menu/picaPrsutaPark.35d67794d58f86ef3d58.jpg',
+    available: true,
+  },
+  {
+    id: 'cebata-junetina',
+    name: 'Cebata sa cepkanom junetinom',
+    category: 'Cebate',
+    price: 850,
+    description: 'Cebata, cepkana junetina, sir, senf i ljubicasti luk.',
+    image: '/sedmica-menu/cepkana-junetina.c1da34d4cc7aaf5cf6e9.jpg',
+    available: true,
+  },
+  {
+    id: 'rostilj-kobasica',
+    name: 'Rostilj kobasica 200g',
+    category: 'Glavna jela',
+    price: 1015,
+    description: 'Kobasica, pomfrit, luk, sezonska salata, senf i domaca lepinja.',
+    image: '/sedmica-menu/file-slanina-sir.d6999769b8cde8e9e8e3.jpg',
+    available: true,
+  },
+  {
+    id: 'piletina-gljive',
+    name: 'Piletina u sosu od gljiva',
+    category: 'Glavna jela',
+    price: 1030,
+    description: 'Pileci file, sos sa sampinjonima, pomfrit, salata i domaca lepinja.',
+    image: '/sedmica-menu/piletinaFungi.3a9c44d92201b43338dc.jpg',
+    available: true,
+  },
+  {
+    id: 'gulas-testenina',
+    name: 'Gulas sa domacom testeninom',
+    category: 'Glavna jela',
+    price: 1110,
+    description: 'Juneci gulas, domaca testenina, sezonska salata i lepinja.',
+    image: '/sedmica-menu/gulas.3e3f48390f18cc403a3f.jpg',
+    available: true,
+  },
+  {
+    id: 'sicilijanska-snicla',
+    name: 'Sicilijanska snicla',
+    category: 'Paste',
+    price: 1155,
+    description: 'Pohovani pileci file, pelat, testenina u marinadi, sirevi i parmezan.',
+    image: '/sedmica-menu/sicilijanska-snicla.df18fe5fd1b5bd931404.jpg',
+    available: true,
+  },
+  {
+    id: 'karbonara',
+    name: 'Karbonara 450g',
+    category: 'Paste',
+    price: 915,
+    description: 'Testenina, pavlaka, zacini, zumance i slanina.',
+    image: '/sedmica-menu/pastaPark.e459d17900f2972718a0.jpg',
+    available: true,
+  },
+  {
+    id: 'cezar-salata',
+    name: 'Cezar salata 420g',
+    category: 'Salate',
+    price: 1015,
+    description: 'Piletina, slanina, iceberg, cherry paradajz, krutoni, dresing i parmezan.',
+    image: '/sedmica-menu/salataPark.a434aea1ee4c79427b4f.jpg',
+    available: true,
+  },
+];
+
+const users = [
+  {
+    id: 'usr-admin',
+    name: 'Admin Sedmica',
+    email: 'admin@sedmica.rs',
+    password: 'sedmica123',
+    role: 'administrator',
+  },
+];
+
+module.exports = {
+  categories,
+  products,
+  users,
+};
