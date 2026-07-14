@@ -49,6 +49,7 @@ function App() {
   const cartCount = cartItems.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
   const isLoggedIn = Boolean(currentUser);
   const isAdmin = currentUser?.role === 'administrator';
+  const needsDeliveryAddress = deliveryMethod === 'Dostava' && orderNote.trim().length === 0;
 
   const handleAuthChange = (event) => {
     const { name, value } = event.target;
@@ -143,6 +144,11 @@ function App() {
       return;
     }
 
+    if (needsDeliveryAddress) {
+      setOrderMessage('Za dostavu unesi adresu u napomeni.');
+      return;
+    }
+
     const nextOrder = {
       id: `SED-${String(orders.length + 1).padStart(3, '0')}`,
       createdAt: new Date().toLocaleDateString('sr-RS'),
@@ -210,7 +216,7 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-card" aria-label="Informacije o lokalu">
+          <div className="hero-card" id="kontakt" aria-label="Informacije o lokalu">
             <span>Adresa</span>
             <strong>{restaurantInfo.address}</strong>
             <span>Telefon</span>
@@ -229,7 +235,7 @@ function App() {
             <h2>Brzo porucivanje</h2>
             <p>Korpa i checkout su pripremljeni za online narucivanje i placanje.</p>
           </article>
-          <article id="kontakt">
+          <article>
             <span>03</span>
             <h2>Dostava i preuzimanje</h2>
             <p>Porudzbinu mozes preuzeti u lokalu ili traziti dostavu u okolini.</p>
@@ -471,7 +477,7 @@ function App() {
               {orderMessage && <p className="order-message">{orderMessage}</p>}
               <button
                 className="checkout-button"
-                disabled={cartItems.length === 0}
+                disabled={cartItems.length === 0 || needsDeliveryAddress}
                 type="button"
                 onClick={createOrder}
               >
