@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react';
 import './App.css';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import Product from './components/Product';
 import { menuCategories, menuItems } from './data/menuData';
 
 const restaurantInfo = {
@@ -181,25 +184,12 @@ function App() {
 
   return (
     <div className="app">
-      <header className="site-header">
-        <button className="brand" type="button" aria-label="Sedmica pocetna">
-          <span className="brand-symbol">7</span>
-          <span>
-            <strong>{restaurantInfo.name}</strong>
-            <small>{restaurantInfo.subtitle}</small>
-          </span>
-        </button>
-
-        <nav className="main-nav" aria-label="Glavna navigacija">
-          <a href="#meni">Meni</a>
-          <a href="#korpa">Korpa {cartCount > 0 && <span>{cartCount}</span>}</a>
-          <a href="#prijava">{isLoggedIn ? 'Nalog' : 'Prijava'}</a>
-          <a href="#porudzbine">Porudzbine</a>
-          {isAdmin && <a href="#admin">Admin</a>}
-          <a href="#dostava">Dostava</a>
-          <a href="#kontakt">Kontakt</a>
-        </nav>
-      </header>
+      <Header
+        cartCount={cartCount}
+        isAdmin={isAdmin}
+        isLoggedIn={isLoggedIn}
+        restaurantInfo={restaurantInfo}
+      />
 
       <main>
         <section className="hero">
@@ -356,30 +346,12 @@ function App() {
           <div className="menu-layout">
             <div className="menu-grid" aria-live="polite">
               {filteredItems.map((item) => (
-                <article className="menu-card" key={item.id}>
-                  <img src={item.image} alt={item.name} />
-                  <div className="menu-card-body">
-                    <div className="menu-card-top">
-                      <span>{item.category}</span>
-                      {item.popular && <strong>Popularno</strong>}
-                      {!item.available && <strong className="muted-badge">Nedostupno</strong>}
-                    </div>
-                    <h3>{item.name}</h3>
-                    <p>{item.description}</p>
-                    <div className="menu-card-actions">
-                      <b>{item.price.toLocaleString('sr-RS')} RSD</b>
-                      <span>
-                        <button
-                          disabled={!item.available}
-                          type="button"
-                          onClick={() => addToCart(item)}
-                        >
-                          {!item.available ? 'Nema' : isLoggedIn ? 'Dodaj' : 'Prijava'}
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                </article>
+                <Product
+                  isLoggedIn={isLoggedIn}
+                  item={item}
+                  key={item.id}
+                  onAddToCart={addToCart}
+                />
               ))}
             </div>
           </div>
@@ -592,6 +564,7 @@ function App() {
           </section>
         )}
       </main>
+      <Footer restaurantInfo={restaurantInfo} />
     </div>
   );
 }
